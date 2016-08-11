@@ -93,8 +93,8 @@ namespace POGOLib.Net
 
 				_session.Player.Data = playerResponse.PlayerData;
 				
-                // DownloadRemoteConfig
-                SendRemoteProcedureCall(new Request
+                // Get DownloadRemoteConfig
+                var remoteConfigResponse = SendRemoteProcedureCall(new Request
                 {
                     RequestType = RequestType.DownloadRemoteConfigVersion,
                     RequestMessage = new DownloadRemoteConfigVersionMessage
@@ -103,25 +103,34 @@ namespace POGOLib.Net
                         AppVersion = 2903
                     }.ToByteString()
                 });
+                var remoteConfigParsed = DownloadRemoteConfigVersionResponse.Parser.ParseFrom(remoteConfigResponse);
 
-                // GetAssetDigest
-                SendRemoteProcedureCall(new Request
+                var timestamp = (ulong) TimeUtil.GetCurrentTimestampInMilliseconds();
+                if (_session.Templates.AssetDigests == null || remoteConfigParsed.AssetDigestTimestampMs > timestamp)
                 {
-                    RequestType = RequestType.GetAssetDigest,
-                    RequestMessage = new GetAssetDigestMessage
+                    // GetAssetDigest
+                    var assetDigestResponse = SendRemoteProcedureCall(new Request
                     {
-                        Platform = Platform.Android,
-                        AppVersion = 2903
-                    }.ToByteString()
-                });
+                        RequestType = RequestType.GetAssetDigest,
+                        RequestMessage = new GetAssetDigestMessage
+                        {
+                            Platform = Platform.Android,
+                            AppVersion = 2903
+                        }.ToByteString()
+                    });
+                    _session.Templates.SetAssetDigests(GetAssetDigestResponse.Parser.ParseFrom(assetDigestResponse));
+                }
 
-                // - Not sending because we are acting like we are already up-to-date with the latest assets.
-                // DownloadItemTemplates
-                // var itemTemplateResponse = SendRemoteProcedureCall(new Request
-                // {
-                // RequestType = RequestType.DownloadItemTemplates
-                // });
-                // _session.Templates.SetItemTemplates(DownloadItemTemplatesResponse.Parser.ParseFrom(itemTemplateResponse));
+                if (_session.Templates.ItemTemplates == null || remoteConfigParsed.ItemTemplatesTimestampMs > timestamp)
+                {
+                    // DownloadItemTemplates
+                    var itemTemplateResponse = SendRemoteProcedureCall(new Request
+                    {
+                        RequestType = RequestType.DownloadItemTemplates
+                    });
+
+                    _session.Templates.SetItemTemplates(DownloadItemTemplatesResponse.Parser.ParseFrom(itemTemplateResponse));
+                }
             }
             catch (Exception)
             {

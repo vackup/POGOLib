@@ -39,9 +39,12 @@ namespace POGOLib.Net
             Device = device;
             Player = new Player(geoCoordinate);
             Map = new Map(this);
+            Templates = new Templates();
             RpcClient = new RpcClient(this);
             _heartbeat = new HeartbeatDispatcher(this);
         }
+
+        public Templates Templates { get; }
 
         /// <summary>
         ///     Gets the <see cref="AccessToken" /> of the <see cref="Session" />.
