@@ -93,8 +93,8 @@ namespace POGOLib.Net
 
 				_session.Player.Data = playerResponse.PlayerData;
 				
-                // Get DownloadRemoteConfig
-                var remoteConfigResponse = SendRemoteProcedureCall(new Request
+                // DownloadRemoteConfig
+                SendRemoteProcedureCall(new Request
                 {
                     RequestType = RequestType.DownloadRemoteConfigVersion,
                     RequestMessage = new DownloadRemoteConfigVersionMessage
@@ -103,34 +103,25 @@ namespace POGOLib.Net
                         AppVersion = 2903
                     }.ToByteString()
                 });
-                var remoteConfigParsed = DownloadRemoteConfigVersionResponse.Parser.ParseFrom(remoteConfigResponse);
 
-                var timestamp = (ulong) TimeUtil.GetCurrentTimestampInMilliseconds();
-                if (_session.Templates.AssetDigests == null || remoteConfigParsed.AssetDigestTimestampMs > timestamp)
+                // GetAssetDigest
+                SendRemoteProcedureCall(new Request
                 {
-                    // GetAssetDigest
-                    var assetDigestResponse = SendRemoteProcedureCall(new Request
+                    RequestType = RequestType.GetAssetDigest,
+                    RequestMessage = new GetAssetDigestMessage
                     {
-                        RequestType = RequestType.GetAssetDigest,
-                        RequestMessage = new GetAssetDigestMessage
-                        {
-                            Platform = Platform.Android,
-                            AppVersion = 2903
-                        }.ToByteString()
-                    });
-                    _session.Templates.SetAssetDigests(GetAssetDigestResponse.Parser.ParseFrom(assetDigestResponse));
-                }
+                        Platform = Platform.Android,
+                        AppVersion = 2903
+                    }.ToByteString()
+                });
 
-                if (_session.Templates.ItemTemplates == null || remoteConfigParsed.ItemTemplatesTimestampMs > timestamp)
-                {
-                    // DownloadItemTemplates
-                    var itemTemplateResponse = SendRemoteProcedureCall(new Request
-                    {
-                        RequestType = RequestType.DownloadItemTemplates
-                    });
-
-                    _session.Templates.SetItemTemplates(DownloadItemTemplatesResponse.Parser.ParseFrom(itemTemplateResponse));
-                }
+                // - Not sending because we are acting like we are already up-to-date with the latest assets.
+                // DownloadItemTemplates
+                // var itemTemplateResponse = SendRemoteProcedureCall(new Request
+                // {
+                // RequestType = RequestType.DownloadItemTemplates
+                // });
+                // _session.Templates.SetItemTemplates(DownloadItemTemplatesResponse.Parser.ParseFrom(itemTemplateResponse));
             }
             catch (Exception)
             {
