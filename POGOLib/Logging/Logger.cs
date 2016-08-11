@@ -34,22 +34,19 @@ namespace POGOLib.Logging
         {
             if (logLevel < LoggerConfiguration.MinimumLogLevel) return;
 
-            var foregroundColor = LoggerConfiguration.DefaultForegroundColor;
-            var backgroundColor = LoggerConfiguration.DefaultBackgroundColor;
-            var timestamp = DateTime.Now.ToString("HH:mm:ss");
-
-            if (LoggerConfiguration.LogLevelColors.ContainsKey(logLevel))
-            {
-                var colors = LoggerConfiguration.LogLevelColors[logLevel];
-
-                foregroundColor = colors.ForegroundColor;
-                backgroundColor = colors.BackgroundColor;
-            }
-
-            Console.ForegroundColor = foregroundColor;
-            Console.BackgroundColor = backgroundColor;
-            Console.WriteLine($"{timestamp,-10}{logLevel,-8}{message}");
-            Console.ResetColor();
+//            var foregroundColor = LoggerConfiguration.DefaultForegroundColor;
+//            var backgroundColor = LoggerConfiguration.DefaultBackgroundColor;
+//            var timestamp = DateTime.Now.ToString("HH:mm:ss");
+//
+//            if (LoggerConfiguration.LogLevelColors.ContainsKey(logLevel))
+//            {
+//                var colors = LoggerConfiguration.LogLevelColors[logLevel];
+//
+//                foregroundColor = colors.ForegroundColor;
+//                backgroundColor = colors.BackgroundColor;
+//            }
+            
+//            Console.WriteLine($"{timestamp,-10}{logLevel,-8}{message}");
         }
 
     }

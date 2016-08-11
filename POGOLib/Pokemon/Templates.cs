@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Configuration;
 using System.IO;
-using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using POGOProtos.Data;

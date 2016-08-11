@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading;
 using GeoCoordinatePortable;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
@@ -129,8 +128,8 @@ namespace POGOLib.Net
                     {
                         RequestType = RequestType.DownloadItemTemplates
                     });
-                    _session.Templates.SetItemTemplates(
-                        DownloadItemTemplatesResponse.Parser.ParseFrom(itemTemplateResponse));
+
+                    _session.Templates.SetItemTemplates(DownloadItemTemplatesResponse.Parser.ParseFrom(itemTemplateResponse));
                 }
             }
             catch (Exception)
